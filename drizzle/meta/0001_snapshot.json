@@ -1,0 +1,701 @@
+{
+  "id": "2e32af74-3b4a-4748-b167-c8a85a27ec8a",
+  "prevId": "b6a248e9-c1f2-41a3-be01-32db0d479300",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.cutting_orders": {
+      "name": "cutting_orders",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "order_seq": {
+          "name": "order_seq",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "identity": {
+            "name": "cutting_orders_order_seq_seq",
+            "increment": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "startWith": "1",
+            "cache": "1",
+            "cycle": false,
+            "schema": "public",
+            "type": "always"
+          }
+        },
+        "order_no": {
+          "name": "order_no",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "generated": {
+            "type": "stored",
+            "as": "'CO-' || lpad(order_seq::text, 5, '0')"
+          }
+        },
+        "recipe_id": {
+          "name": "recipe_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "target_qty": {
+          "name": "target_qty",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fabric_roll_id": {
+          "name": "fabric_roll_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "actual_fabric_yds": {
+          "name": "actual_fabric_yds",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expected_fabric_yds": {
+          "name": "expected_fabric_yds",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "order_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'CUTTING_IN_PROGRESS'"
+        },
+        "created_by": {
+          "name": "created_by",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "wastage_pct": {
+          "name": "wastage_pct",
+          "type": "numeric(7, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "verified_by": {
+          "name": "verified_by",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "verified_at": {
+          "name": "verified_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sewing_started_by": {
+          "name": "sewing_started_by",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sewing_started_at": {
+          "name": "sewing_started_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "cutting_orders_status_idx": {
+          "name": "cutting_orders_status_idx",
+          "columns": [
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "with": {},
+          "method": "btree",
+          "concurrently": false
+        }
+      },
+      "foreignKeys": {
+        "cutting_orders_recipe_id_recipes_id_fk": {
+          "name": "cutting_orders_recipe_id_recipes_id_fk",
+          "tableFrom": "cutting_orders",
+          "columnsFrom": [
+            "recipe_id"
+          ],
+          "tableTo": "recipes",
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "restrict"
+        },
+        "cutting_orders_created_by_users_id_fk": {
+          "name": "cutting_orders_created_by_users_id_fk",
+          "tableFrom": "cutting_orders",
+          "columnsFrom": [
+            "created_by"
+          ],
+          "tableTo": "users",
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "no action"
+        },
+        "cutting_orders_verified_by_users_id_fk": {
+          "name": "cutting_orders_verified_by_users_id_fk",
+          "tableFrom": "cutting_orders",
+          "columnsFrom": [
+            "verified_by"
+          ],
+          "tableTo": "users",
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "no action"
+        },
+        "cutting_orders_sewing_started_by_users_id_fk": {
+          "name": "cutting_orders_sewing_started_by_users_id_fk",
+          "tableFrom": "cutting_orders",
+          "columnsFrom": [
+            "sewing_started_by"
+          ],
+          "tableTo": "users",
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "cutting_orders_order_no_uq": {
+          "name": "cutting_orders_order_no_uq",
+          "columns": [
+            "order_no"
+          ],
+          "nullsNotDistinct": false
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "cutting_orders_target_qty_positive": {
+          "name": "cutting_orders_target_qty_positive",
+          "value": "\"cutting_orders\".\"target_qty\" > 0"
+        },
+        "cutting_orders_actual_fabric_positive": {
+          "name": "cutting_orders_actual_fabric_positive",
+          "value": "\"cutting_orders\".\"actual_fabric_yds\" > 0"
+        },
+        "cutting_orders_expected_fabric_positive": {
+          "name": "cutting_orders_expected_fabric_positive",
+          "value": "\"cutting_orders\".\"expected_fabric_yds\" > 0"
+        },
+        "cutting_orders_verified_audit_present": {
+          "name": "cutting_orders_verified_audit_present",
+          "value": "\"cutting_orders\".\"status\" NOT IN ('VERIFIED', 'IN_SEWING')\n          OR (\"cutting_orders\".\"verified_by\" IS NOT NULL AND \"cutting_orders\".\"verified_at\" IS NOT NULL AND \"cutting_orders\".\"wastage_pct\" IS NOT NULL)"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.recipe_components": {
+      "name": "recipe_components",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "recipe_id": {
+          "name": "recipe_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "component_name": {
+          "name": "component_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "pieces_per_garment": {
+          "name": "pieces_per_garment",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "image_url": {
+          "name": "image_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sort_order": {
+          "name": "sort_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "recipe_components_recipe_id_recipes_id_fk": {
+          "name": "recipe_components_recipe_id_recipes_id_fk",
+          "tableFrom": "recipe_components",
+          "columnsFrom": [
+            "recipe_id"
+          ],
+          "tableTo": "recipes",
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "restrict"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "recipe_components_recipe_name_uq": {
+          "name": "recipe_components_recipe_name_uq",
+          "columns": [
+            "recipe_id",
+            "component_name"
+          ],
+          "nullsNotDistinct": false
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "recipe_components_pieces_positive": {
+          "name": "recipe_components_pieces_positive",
+          "value": "\"recipe_components\".\"pieces_per_garment\" > 0"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.recipes": {
+      "name": "recipes",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "recipe_code": {
+          "name": "recipe_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "category": {
+          "name": "category",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "std_fabric_yards": {
+          "name": "std_fabric_yards",
+          "type": "numeric(6, 2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "wastage_cap": {
+          "name": "wastage_cap",
+          "type": "numeric(5, 2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "recipes_recipeCode_unique": {
+          "name": "recipes_recipeCode_unique",
+          "columns": [
+            "recipe_code"
+          ],
+          "nullsNotDistinct": false
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "recipes_std_fabric_positive": {
+          "name": "recipes_std_fabric_positive",
+          "value": "\"recipes\".\"std_fabric_yards\" > 0"
+        },
+        "recipes_wastage_cap_range": {
+          "name": "recipes_wastage_cap_range",
+          "value": "\"recipes\".\"wastage_cap\" >= 0 AND \"recipes\".\"wastage_cap\" <= 100"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.users": {
+      "name": "users",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password_hash": {
+          "name": "password_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "role",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "full_name": {
+          "name": "full_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "users_email_unique": {
+          "name": "users_email_unique",
+          "columns": [
+            "email"
+          ],
+          "nullsNotDistinct": false
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.verification_items": {
+      "name": "verification_items",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "order_id": {
+          "name": "order_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "component_id": {
+          "name": "component_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expected_qty": {
+          "name": "expected_qty",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "actual_qty": {
+          "name": "actual_qty",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "generated": {
+            "type": "stored",
+            "as": "CASE\n            WHEN actual_qty IS NULL THEN NULL\n            WHEN actual_qty = expected_qty THEN 'GREEN'\n            WHEN actual_qty > expected_qty THEN 'YELLOW'\n            ELSE 'RED'\n          END"
+          }
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "verification_items_order_id_cutting_orders_id_fk": {
+          "name": "verification_items_order_id_cutting_orders_id_fk",
+          "tableFrom": "verification_items",
+          "columnsFrom": [
+            "order_id"
+          ],
+          "tableTo": "cutting_orders",
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "cascade"
+        },
+        "verification_items_component_id_recipe_components_id_fk": {
+          "name": "verification_items_component_id_recipe_components_id_fk",
+          "tableFrom": "verification_items",
+          "columnsFrom": [
+            "component_id"
+          ],
+          "tableTo": "recipe_components",
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "restrict"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "verification_items_order_component_uq": {
+          "name": "verification_items_order_component_uq",
+          "columns": [
+            "order_id",
+            "component_id"
+          ],
+          "nullsNotDistinct": false
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "verification_items_expected_positive": {
+          "name": "verification_items_expected_positive",
+          "value": "\"verification_items\".\"expected_qty\" > 0"
+        },
+        "verification_items_actual_non_negative": {
+          "name": "verification_items_actual_non_negative",
+          "value": "\"verification_items\".\"actual_qty\" IS NULL OR \"verification_items\".\"actual_qty\" >= 0"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.verification_logs": {
+      "name": "verification_logs",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "order_id": {
+          "name": "order_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "verifier_id": {
+          "name": "verifier_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "decision": {
+          "name": "decision",
+          "type": "verification_decision",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "rejection_note": {
+          "name": "rejection_note",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "wastage_pct": {
+          "name": "wastage_pct",
+          "type": "numeric(7, 2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "component_snapshot": {
+          "name": "component_snapshot",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "verification_logs_order_idx": {
+          "name": "verification_logs_order_idx",
+          "columns": [
+            {
+              "expression": "order_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "with": {},
+          "method": "btree",
+          "concurrently": false
+        }
+      },
+      "foreignKeys": {
+        "verification_logs_order_id_cutting_orders_id_fk": {
+          "name": "verification_logs_order_id_cutting_orders_id_fk",
+          "tableFrom": "verification_logs",
+          "columnsFrom": [
+            "order_id"
+          ],
+          "tableTo": "cutting_orders",
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "restrict"
+        },
+        "verification_logs_verifier_id_users_id_fk": {
+          "name": "verification_logs_verifier_id_users_id_fk",
+          "tableFrom": "verification_logs",
+          "columnsFrom": [
+            "verifier_id"
+          ],
+          "tableTo": "users",
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "verification_logs_rejection_note_required": {
+          "name": "verification_logs_rejection_note_required",
+          "value": "\"verification_logs\".\"decision\" = 'APPROVED' OR length(btrim(coalesce(\"verification_logs\".\"rejection_note\", ''))) >= 10"
+        }
+      },
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.verification_decision": {
+      "name": "verification_decision",
+      "schema": "public",
+      "values": [
+        "APPROVED",
+        "REJECTED"
+      ]
+    },
+    "public.order_status": {
+      "name": "order_status",
+      "schema": "public",
+      "values": [
+        "CUTTING_IN_PROGRESS",
+        "PENDING_VERIFICATION",
+        "REJECTED",
+        "VERIFIED",
+        "IN_SEWING"
+      ]
+    },
+    "public.role": {
+      "name": "role",
+      "schema": "public",
+      "values": [
+        "cutting_supervisor",
+        "cutting_verifier",
+        "sewing_supervisor"
+      ]
+    }
+  },
+  "schemas": {},
+  "views": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}
