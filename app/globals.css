@@ -1,8 +1,15 @@
 @import "tailwindcss";
 
+/*
+ * Light-only by design. The starter template switched --foreground to near-white under
+ * prefers-color-scheme: dark while native inputs stayed white — the exact white-on-white
+ * input defect called out in the UAT audit. A factory-floor terminal gets one tested,
+ * high-contrast palette instead.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+  --background: #f8fafc; /* slate-50 */
+  --foreground: #0f172a; /* slate-900 */
 }
 
 @theme inline {
@@ -12,15 +19,37 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Every form control: dark text on white, visible placeholder, unmistakable focus ring. */
+@layer base {
+  input,
+  select,
+  textarea,
+  option {
+    color: #0f172a;
+    background-color: #ffffff;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: #64748b; /* slate-500: 4.76:1 on white */
+    opacity: 1;
+  }
+
+  input:disabled,
+  select:disabled,
+  textarea:disabled {
+    color: #334155;
+    background-color: #f1f5f9;
+  }
+
+  :focus-visible {
+    outline: 3px solid #1d4ed8;
+    outline-offset: 2px;
+  }
 }
